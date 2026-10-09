@@ -1,5 +1,7 @@
 # pkp-lite
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23265947.svg)](https://doi.org/10.5281/zenodo.23265947)
+
 pkp-lite fits simplified pyrolysis kinetic models (SFOR, C2SM) to detailed
 [Cantera](https://cantera.org/) reaction mechanism simulations. Give it a
 fuel definition and a set of time-temperature profiles, and it will:
