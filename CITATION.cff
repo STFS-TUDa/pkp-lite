@@ -1,0 +1,46 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "pkp-lite"
+abstract: >-
+  Fits simplified pyrolysis kinetic models (SFOR, C2SM) to detailed Cantera
+  reaction mechanism simulations of biomass and coal pyrolysis.
+type: software
+authors:
+  - family-names: Berkel
+    given-names: "Leon Loni"
+    affiliation: "STFS, Technical University of Darmstadt"
+    orcid: "https://orcid.org/0000-0002-1683-2456"
+  - family-names: Steffens
+    given-names: Pascal
+    affiliation: "STFS, Technical University of Darmstadt"
+    orcid: "https://orcid.org/0000-0001-6262-3084"
+  - family-names: Nicolai
+    given-names: Hendrik
+    affiliation: "McGill University"
+    orcid: "https://orcid.org/0000-0002-0355-2252"
+  - family-names: Hasse
+    given-names: Christian
+    affiliation: "STFS, Technical University of Darmstadt"
+    orcid: "https://orcid.org/0000-0001-9333-0911"
+repository-code: "https://github.com/STFS-TUDa/pkp-lite"
+license: GPL-3.0-or-later
+date-released: "2026-10-09"
+references:
+  - type: article
+    title: "Simulation of Entrained Flow Gasification with Advanced Coal Conversion Submodels. Part 1: Pyrolysis"
+    authors:
+      - family-names: Vascellari
+        given-names: Michele
+      - family-names: Arora
+        given-names: R.
+      - family-names: Pollack
+        given-names: M.
+      - family-names: Hasse
+        given-names: C.
+    journal: Fuel
+    volume: "113"
+    start: "654"
+    end: "669"
+    year: 2013
+    doi: "10.1016/j.fuel.2013.06.014"
+    notes: "pkp-lite's reactor/fitting pipeline is based on the original PKP code described here."

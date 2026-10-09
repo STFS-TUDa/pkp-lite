@@ -1,0 +1,143 @@
+import argparse
+import logging
+import os
+from datetime import datetime
+import shutil
+import yaml
+import cantera as ct
+import sys
+import pandas as pd
+from tqdm import tqdm
+
+# Add the parent directory to the Python path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+import pkplite as pl
+
+
+
+
+def parse_args():
+    """
+    Define arguments of the script
+    """
+    parser = argparse.ArgumentParser(
+        description="PKP Runner"
+    )
+    parser.add_argument('yaml_file', action="store",
+                        help="YAML input file")
+    parser.add_argument('-n', action="store", dest="np", type=int,
+                        default=1,
+                        help="Number of processor")
+    parser.add_argument('-o', action="store", dest="results_dir",
+                        type=str,
+                        default="Results", help="Results directory")
+    parser.add_argument('-d', action="store_true", dest="debug",
+                        help="Print debug messages")
+    parser.add_argument('--run-only', action="store_true",
+                        dest="run_only",
+                        help=("Run only detailed models"
+                              " without calibration"))
+    return parser.parse_args()
+
+def add_kwargs(func, **static_kwargs):
+    """Returns a new function with the filename pre-applied."""
+    def wrapper(*args, **kwargs):
+        # Add filename to the function call as a keyword argument
+        kwargs = {**static_kwargs,**kwargs}
+        return func(*args, **kwargs)
+    return wrapper
+
+
+if __name__ == '__main__':
+
+    # Read arguments
+    arguments = parse_args()
+    n_jobs = arguments.np
+
+    # --- Create results directory --- #
+    basename = os.path.splitext(arguments.yaml_file)[0]
+    basename = basename + '_' + datetime.today().strftime('%Y-%m-%d')
+
+    # Number directory
+    basename_fmt = lambda basename,i : basename + f'_{i:02}'
+
+    i = 0
+    while os.path.exists(os.path.join('results',basename_fmt(basename,i))):
+        i += 1
+
+    basename = basename_fmt(basename,i)
+
+    os.makedirs(os.path.join('results',basename))
+
+    # Copy input file
+    shutil.copy(arguments.yaml_file,os.path.join('results',basename))
+
+
+    # --- Read yaml file --- #
+    with open(arguments.yaml_file, 'r') as f:
+        settings = yaml.load(f, Loader=yaml.FullLoader)
+
+    # --- Convert composition --- #
+    fuel_settings = settings['fuel']
+    if 'reference_species' not in fuel_settings:
+
+        if fuel_settings['type'] == 'coal':
+            fuel_settings['reference_species'] = pl.characterize_coal_composition(fuel_settings)
+
+        elif fuel_settings['type'] == 'biomass':
+            fuel_settings['reference_species'] = pl.characterize_biomass_composition(fuel_settings)
+            pass
+
+    # --- Run operating conditions --- # 
+    operating_points = settings['operating_conditions']['runs'] 
+
+    mechanism = ct.Solution(settings['fuel']['mechanism'])
+    mechanism.Y = fuel_settings['reference_species']
+    fuel = mechanism.Y
+
+    detailed_reactor = pl.reactor(fuel=fuel,rate_function=pl.rate_function_detailed,rate_function_arguments={'mechanism':mechanism})
+
+    
+    results = [detailed_reactor.run(op) for op in tqdm(operating_points, desc="Detailed runs")]
+
+    # --- Post process --- #
+    # Create data frames
+    results = [pd.DataFrame(res,columns=['t'] + mechanism.species_names + ['T']) for res in results]
+
+    # Add volatiles and solids to data frames
+    results = pl.calculate_volatiles_and_solids_from_species(
+        results, species_classification_path=fuel_settings.get('species_classification'))
+
+    # Write out detailed results
+    pl.save_data(results,basename)
+
+
+    # --- Run fitting --- #
+
+    if not arguments.run_only and 'fit' in settings:
+
+        fit_settings = settings['fit']
+        fit_settings['n_jobs'] = n_jobs
+
+        modeling_function = getattr(pl,settings['fit'].get('model','C2SM'))
+        # coefficients = { "alpha1":0.41, "alpha2": 0.58, "A1": 49e3, "A2": 7.2e7, "Ea1": 34e6, "Ea2":95e6 }
+        model_reactor = pl.reactor(fuel=[0,0,1],rate_function=modeling_function,rate_function_arguments={"coefficients":[0]*modeling_function.n_coefficients})
+        # results_model = [model_reactor.run(op) for op in operating_points]
+        # results_model = [pd.DataFrame(res,columns=['t','volatiles','char','raw','T']) for res in results_model]
+        # pl.save_data(results_model,basename,add_info="_model_static")
+
+        fit_method = fit_settings.get('fit_method', 'evolution')
+        if fit_method == 'evolution':
+            fit_results, coefficients = pl.evolution_fit(fit_settings, model_reactor, operating_points, results)
+            pl.save_data(fit_results, basename, add_info="_model")
+        elif fit_method == 'least_squares':
+            fit_results, coefficients = pl.least_squares_fit(fit_settings, model_reactor, operating_points, results)
+            pl.save_data(fit_results, basename, add_info="_model")
+        elif fit_method == 'least_squares_log':
+            fit_results, coefficients = pl.least_squares_fit_log(fit_settings, model_reactor, operating_points, results)
+            pl.save_data(fit_results, basename, add_info="_model")
+
+        coeff_path = os.path.join('results', basename, 'coefficients.yml')
+        with open(coeff_path, 'w') as f:
+            yaml.dump({'model': settings['fit'].get('model', 'C2SM'),
+                       'coefficients': {k: float(v) for k, v in coefficients.items()}}, f)

@@ -1,0 +1,24 @@
+results/*
+__pycache__/
+*.pyc
+.DS_Store
+info.log
+logBatch
+.venv/
+
+# Data/notebooks not part of the published package (kept local)
+biomasses_db/
+surrogate_fitting_hpc/
+*.ipynb
+!analyze_fit.ipynb
+new_mechanism.ck
+input_*.yml
+
+# Local utilities not part of the published core (depend on biomasses_db/ or are unused)
+scripts/batchFit
+scripts/generateScatter
+scripts/exportCoefficients
+scripts/reduceGasMechanism
+
+# Internal AI-assistant instructions, not published
+CLAUDE.md

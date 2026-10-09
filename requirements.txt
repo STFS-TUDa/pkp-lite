@@ -1,0 +1,8 @@
+cantera
+deap
+scipy
+numpy
+pandas
+pyyaml
+tqdm
+matplotlib

@@ -1,0 +1,61 @@
+fuel:
+  name: walnut
+  type: biomass
+
+  reference_species:
+    CELL: 0.30510000000000004
+    XYHW: 0.3528
+    LIGC: 0.045899999999999996
+    LIGH: 0.045899999999999996
+    LIGO: 0.045899999999999996
+    TANN: 0.09000000000000001
+    TGL: 0.014400000000000001
+    MOIST: 0.1
+  # elemental_analysis: 
+  #   composition:
+  #     C: 0.55
+  #     H: 0.07
+  #     O: 0.38
+  #   biomass_type: hardwood
+  # moisture: 0.2
+  # ash: 0.1
+
+  #ultimate_analysis:
+  #proximate_analysis:
+
+  HHV :   18.445 
+  rho_dry : 1310 # kg/m3
+  pressure: 101325
+
+  # Path to a Cantera-format solid-phase reaction mechanism (not included in
+  # this repo - see README for details on obtaining one, e.g. CRECK).
+  mechanism: path/to/mechanism.yaml
+
+fit:
+  model: SFOR
+  fit_method: least_squares
+  species: volatiles
+  bounds:
+    min: [0.0, 1e0, 1e4]
+    max: [1.0, 1e12, 1e9]
+  parameters_init: [0.6, 1e5, 1e8]
+  final_error_weight: 0
+
+  method: evolve
+  # from here parameters of evolve
+  npop: 40
+  ngen: 40
+  mu: 20
+  lambda_: 20
+  cxpb: 0.5
+  mutpb: 0.5
+  backend: dopri5
+
+operating_conditions:
+    pressure    : 1.0 #atmosphere
+    runs: 
+      - [ [ 0, 500], [ 0.01 , 920],[0.025 , 1032], [ 0.04, 1500] ] 
+      - [ [ 0, 500], [ 0.01 , 825], [0.025 , 935], [ 0.04, 1500] ] 
+      - [ [ 0, 500], [ 0.01 , 1038], [0.025 , 1144], [0.04, 1500] ]
+
+

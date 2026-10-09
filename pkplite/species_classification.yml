@@ -1,0 +1,29 @@
+# Classifies mechanism species into lumped volatiles/solid components
+# (raw, metaplast, char, light_gas, tar), used by
+# calculate_volatiles_and_solids_from_species() in utility_functions.py.
+#
+# These lists are mechanism-specific: species names depend on exactly which
+# CRECK mechanism version is loaded (see README "Getting a mechanism"). The
+# lists below resemble the current POLIMI convention (CRECK COAL_2003 for
+# coal, the Solid_only biomass mechanism for biomass) - if you use a
+# different or future mechanism version with different species names, copy
+# this file, adjust it, and point `fuel.species_classification` at your copy
+# in input.yml.
+
+coal:
+  raw:       [COAL1, COAL2, COAL3, N_COAL1, N_COAL2, N_COAL3, SAL, SARO, STHIO, SPYR, SSUL, MOIST]
+  metaplast: [CH2_M, COH2_M, CH4_M, CO_L_M, CO2_S_M, CO2_M, CO2_TS_M, BTX_M, COAL1_M, COAL3_M,
+              H2O_M, TAR1_M, TAR2_M, TAR3_M, NH3_M, HCN_M, NTAR_M, H2S_M, STAR_M, CH3SH_M, H2_M, SPYR2]
+  char:      [CHAR, CHARH, CHARG, CHAR_CO2, NCHAR, SCHAR]
+  light_gas: [CO, CO2, H2, CH4, C2H4, C3H6, CH3O, NH3, HCN, H2S, NO, SO2, CH3SH]
+  tar:       [CH2O, H2O, TETRALIN, C12H8, C10H7CH3, BIN1B, VANILLIN, C6H5OCH3, C5H5N, STAR]
+
+biomass:
+  raw:       [CELL, XYHW, LIGC, LIGO, LIGH, MOIST]
+  metaplast: [TANN, TGL, GMSW, XYGR, HCE1, HCE2, CELLA, LIGCC, LIGOH, LIG, ITANN, COH2S, CO2S,
+              COS, CH3OHS, CH4S, C2H4S, C6H5OHS, CH2OS, H2S, C2H6S, LVGS, CHARO, COSTIFFS]
+  char:      [CHAR]
+  light_gas: [CO, CO2, H2, CH4, C2H4, C2H6]
+  tar:       [CH2O, H2O, CH2OHCHO, CHOCHO, CH3CHO, C6H6O3, C2H5CHO, CH3OH, HOCHO, CH2OHCH2CHO,
+              C6H10O5, C5H8O4, FURFURAL, FURAN, C2H5OH, CH3CO2H, CH3COCH3, VANILLIN, C6H5OCH3,
+              CRESOL, C24H28O4, C2H3CHO, MLINO, U2ME12, C6H5OH, LVG]
