@@ -44,3 +44,23 @@ references:
     year: 2013
     doi: "10.1016/j.fuel.2013.06.014"
     notes: "pkp-lite's reactor/fitting pipeline is based on the original PKP code described here."
+  - type: article
+    title: "DEAP: Evolutionary Algorithms Made Easy"
+    authors:
+      - family-names: Fortin
+        given-names: "Félix-Antoine"
+      - family-names: "De Rainville"
+        given-names: "François-Michel"
+      - family-names: Gardner
+        given-names: "Marc-André"
+      - family-names: Parizeau
+        given-names: Marc
+      - family-names: Gagné
+        given-names: Christian
+    journal: "Journal of Machine Learning Research"
+    volume: "13"
+    start: "2171"
+    end: "2175"
+    year: 2012
+    url: "https://www.jmlr.org/papers/v13/fortin12a.html"
+    notes: "pkp-lite's evolution fit method is built on DEAP (LGPL-3.0)."

@@ -250,8 +250,9 @@ own `README.md` on the [CRECK repo](https://github.com/CRECKMODELING/Kinetic-Mec
 which is the source of truth if this list drifts out of date. [11] is the
 biomass elemental-analysis characterization method (see
 [Fuel composition](#fuel-composition-three-ways-to-specify-it)). [12] is the
-original PKP fitting method pkp-lite is based on (see
-[Fitting options](#fitting-options) and [Acknowledgments](#acknowledgments)).
+original PKP fitting method pkp-lite is based on, and [13] the DEAP library
+its `evolution` fit method uses (see [Fitting options](#fitting-options) and
+[Acknowledgments](#acknowledgments)).
 
 **Biomass**
 
@@ -285,6 +286,8 @@ original PKP fitting method pkp-lite is based on (see
 
 [12] Vascellari, Michele, Arora, R., Pollack, M., and Hasse, C. "Simulation of Entrained Flow Gasification with Advanced Coal Conversion Submodels. Part 1: Pyrolysis." *Fuel* 113 (2013): 654–669. [DOI](https://doi.org/10.1016/j.fuel.2013.06.014)
 
+[13] Fortin, Félix-Antoine, De Rainville, François-Michel, Gardner, Marc-André, Parizeau, Marc, and Gagné, Christian. "DEAP: Evolutionary Algorithms Made Easy." *Journal of Machine Learning Research* 13 (2012): 2171–2175. [Paper](https://www.jmlr.org/papers/v13/fortin12a.html)
+
 ## Authors
 
 Leon Loni Berkel, Pascal Steffens, Hendrik Nicolai, Christian Hasse
@@ -295,7 +298,9 @@ If you use pkp-lite itself in your research, please cite it — see
 ## Acknowledgments
 
 pkp-lite's reactor/fitting pipeline is based on the PKP code originally
-developed by Michele Vascellari et al. [[12]](#references).
+developed by Michele Vascellari et al. [[12]](#references). The `evolution`
+fit method is built on [DEAP](https://github.com/DEAP/deap)
+(LGPL-3.0) [[13]](#references).
 
 ## Contact
 
