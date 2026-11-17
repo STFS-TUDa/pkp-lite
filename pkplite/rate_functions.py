@@ -12,10 +12,10 @@ coefficients.yml is 1000x the SI value in J/mol (divide by 1e6 to get kJ/mol).
 import cantera as ct
 import numpy as np
 
-def rate_function_detailed(T, Y, mechanism, pressure=ct.one_atm):
+def rate_function_detailed(T, Y, mechanism, density=None):
     """Species production rates (mass basis) from a Cantera solid-phase mechanism."""
 
-    mechanism.TPY = T, pressure, Y
+    mechanism.TDY = T, density, Y
 
     return ( mechanism.net_production_rates *
                 mechanism.molecular_weights / mechanism.density )

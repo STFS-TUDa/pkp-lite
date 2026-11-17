@@ -95,7 +95,7 @@ if __name__ == '__main__':
     mechanism.Y = fuel_settings['reference_species']
     fuel = mechanism.Y
 
-    detailed_reactor = pl.reactor(fuel=fuel,rate_function=pl.rate_function_detailed,rate_function_arguments={'mechanism':mechanism})
+    detailed_reactor = pl.reactor(fuel=fuel,rate_function=pl.rate_function_detailed,rate_function_arguments={'mechanism':mechanism, 'density':fuel_settings.get('rho_dry')})
 
     
     results = [detailed_reactor.run(op) for op in tqdm(operating_points, desc="Detailed runs")]
@@ -135,6 +135,9 @@ if __name__ == '__main__':
             pl.save_data(fit_results, basename, add_info="_model")
         elif fit_method == 'least_squares_log':
             fit_results, coefficients = pl.least_squares_fit_log(fit_settings, model_reactor, operating_points, results)
+            pl.save_data(fit_results, basename, add_info="_model")
+        elif fit_method == 'arrhenius_regression':
+            fit_results, coefficients = pl.arrhenius_fit(fit_settings, model_reactor, operating_points, results)
             pl.save_data(fit_results, basename, add_info="_model")
 
         coeff_path = os.path.join('results', basename, 'coefficients.yml')

@@ -36,13 +36,14 @@ class reactor:
         t0 = self.operating_point[0,0]
         tend = self.operating_point[-1,0]
         t_eval = np.arange(t0,tend+1e-4,np.minimum((tend-t0)/100, 1e-4))
+        t_eval = t_eval[t_eval <= tend]
 
         # Wrapper for solve_ivp
         def rhs(t, y):
             return self.calc_rate(t, y)
 
         # Integrate
-        sol = solve_ivp(rhs, (t0, tend), y0, method="DOP853", dense_output=True, t_eval=t_eval, max_step=1e-4)
+        sol = solve_ivp(rhs, (t0, tend), y0, method="LSODA", t_eval=t_eval, rtol=1e-6, atol=1e-10)
 
         # Reconstruct result array in the same style you had
         # include both times and state values
@@ -59,11 +60,9 @@ class reactor:
         # calculate rate
         rate = self.rate_function(T, Y,**self.rate_function_arguments)
 
-        # advance dTdt if necessary
-        if T > self.operating_point[self.index + 1,1]:
-            self.index = int(np.minimum(self.index+1, len(self.dTdt_array)-1))
+        i = np.searchsorted(self.operating_point[:, 0], t, side='right') - 1
+        dTdt = self.dTdt_array[int(np.clip(i, 0, len(self.dTdt_array)-1))]
 
-        dTdt = self.dTdt_array[self.index]
         # construct rate
         y_rate = np.hstack((rate,dTdt))
 
